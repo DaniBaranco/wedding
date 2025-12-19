@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmar Asistencia - {{ guest.nombre }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"></head>
+<body>
+    <!-- Efecto de pétalos cayendo -->
+    <div class="petals-container" id="petalsContainer"></div>
+    
+    <div class="container">
+        <header>
+            <h1>💒 ¡Hola {{ guest.nombre }}!</h1>
+            <p>Confirma los detalles de tu asistencia</p>
+        </header>
+
+        <form id="confirmationForm" class="registration-form">
+            <!-- Campos pre-llenados (solo lectura) -->
+            <div class="form-group">
+                <label>🎖️ Invitado Distinguido</label>
+                <div class="guest-info">
+                    <span class="guest-name">{{ guest.nombre }} {{ guest.apellidos }}</span>
+                    <span class="guest-check">✨</span>
+                </div>
+                <input type="hidden" id="nombre" name="nombre" value="{{ guest.nombre }}">
+                <input type="hidden" id="apellidos" name="apellidos" value="{{ guest.apellidos }}">
+            </div>
+
+            {% if guest.get('acompanantes_predefinidos') %}
+            <!-- Acompañantes predefinidos -->
+            <div class="form-group predefined-companions">
+                <label>👥 ¿Vas a asistir con tus acompañantes habituales?</label>
+                <div class="companions-list">
+                    {% for acompanante in guest.acompanantes_predefinidos %}
+                    <div class="companion-item">
+                        <label class="companion-checkbox">
+                            <input type="checkbox" name="predefined_companion" value="{{ acompanante }}" checked>
+                            <span class="companion-name">{{ acompanante }}</span>
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+                <small class="help-text">Puedes desmarcar si alguno no va a asistir</small>
+            </div>
+            {% endif %}
+
+            <div class="form-group">
+                <label for="num_acompanantes">🌹 Acompañantes Adicionales</label>
+                <select id="num_acompanantes" name="num_acompanantes" onchange="updateAcompanantesFields()">
+                    <option value="0">Sin acompañantes adicionales</option>
+                    <option value="1">1 acompañante adicional</option>
+                    <option value="2">2 acompañantes adicionales</option>
+                    <option value="3">3 acompañantes adicionales</option>
+                    <option value="4">4 acompañantes adicionales</option>
+                    <option value="5">5 acompañantes adicionales</option>
+                </select>
+                <small class="help-text">Selecciona si quieres añadir personas adicionales a las ya confirmadas</small>
+            </div>
+
+            <div id="acompanantesContainer" class="acompanantes-container" style="display: none;">
+                <h4>👥 Nombres de los Acompañantes</h4>
+                <div id="acompanantesFields"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="menu">🍽️ Selección Gastronómica *</label>
+                <select id="menu" name="menu" required>
+                    <option value="">Elija su preferencia culinaria</option>
+                    <option value="vegetariano">🌿 Delicia Vegetariana</option>
+                    <option value="carnivoro">🥩 Exquisitez Cárnica</option>
+                    <option value="pescado">🐟 Especialidad Marina</option>
+                    <option value="vegano">🌱 Creación Vegana</option>
+                    <option value="sin_gluten">🌾 Sin Gluten</option>
+                </select>
+            </div>
+
+            <div class="form-group checkbox-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="autobus" name="autobus">
+                    <span class="checkmark"></span>
+                    🚌 ¿Necesitas transporte en autobús?
+                </label>
+                <small class="help-text">El autobús saldrá desde el centro de la ciudad a las 16:00h. Se incluye a todos los acompañantes.</small>
+            </div>
+
+            <button type="submit" class="submit-btn cta-button">
+                <span class="btn-text">💕 Confirmar Asistencia</span>
+                <span class="btn-loading" style="display: none;">Enviando...</span>
+            </button>
+        </form>
+
+        <div class="back-to-search">
+            <a href="/" class="back-link">← ¿No es {{ guest.nombre|title }}? Buscar otro invitado</a>
+        </div>
+
+        <div id="message" class="message" style="display: none;"></div>
+    </div>
+
+    <!-- Modal de confirmación -->
+    <div id="confirmationModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>¡Confirmación Exitosa! 🎉</h2>
+                <span class="modal-close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <img src="{{ url_for('static', filename='images/carton.gif') }}" alt="Celebración" class="celebration-gif">
+                <p class="confirmation-text">¡Exquisito! {{ guest.nombre|title }}</p>
+                <p class="celebration-message">¡Nos vemos en esta velada de ensueño! 🍾</p>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-button" onclick="closeModal()">¡Genial!</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>✨ Gracias por acompañarnos en esta noche mágica ✨</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/confirm.js') }}"></script>
+    <script>
+        function updateAcompanantesFields() {
+            const numAcompanantes = document.getElementById('num_acompanantes').value;
+            const container = document.getElementById('acompanantesContainer');
+            const fieldsContainer = document.getElementById('acompanantesFields');
+            
+            if (numAcompanantes === '0') {
+                container.style.display = 'none';
+                fieldsContainer.innerHTML = '';
+                return;
+            }
+            
+            container.style.display = 'block';
+            fieldsContainer.innerHTML = '';
+            
+            for (let i = 1; i <= parseInt(numAcompanantes); i++) {
+                const fieldDiv = document.createElement('div');
+                fieldDiv.className = 'acompanante-field';
+                fieldDiv.innerHTML = `
+                    <label for="acompanante_${i}">👤 Acompañante ${i}:</label>
+                    <input type="text" id="acompanante_${i}" name="acompanante_${i}" 
+                           placeholder="Nombre completo del acompañante ${i}..." required>
+                `;
+                fieldsContainer.appendChild(fieldDiv);
+            }
+        }
+    </script>
+</body>
+</html>

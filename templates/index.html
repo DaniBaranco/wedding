@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wedding Guest Registration</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/welcome.css') }}">
+</head>
+<body>
+    <!-- Efecto de pétalos cayendo -->
+    <div class="petals-container" id="petalsContainer"></div>
+    
+    <div class="welcome-container">
+        <div class="welcome-card">
+            <h1 class="welcome-title">Which one of our lovely guests are you? ✨</h1>
+            
+            <div class="search-container">
+                <input type="text" id="guestSearch" class="search-input" 
+                       placeholder="Full name" 
+                       autocomplete="off">
+                <div id="searchResults" class="search-results" style="display: none;"></div>
+            </div>
+            
+            <button class="next-button" style="display: none;" onclick="proceedToConfirmation()">
+                Next →
+            </button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/guestDatabase.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/welcome_fixed.js') }}"></script>
+    <script>
+        let selectedGuestId = null;
+        
+        function proceedToConfirmation() {
+            if (selectedGuestId) {
+                window.location.href = `/confirm/${selectedGuestId}`;
+            }
+        }
+        
+        function showNextButton(guestId) {
+            selectedGuestId = guestId;
+            const nextButton = document.querySelector('.next-button');
+            nextButton.style.display = 'block';
+            nextButton.style.animation = 'fadeInUp 0.3s ease-out';
+        }
+    </script>
+</body>
+</html>

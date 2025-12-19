@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - Boda</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body>
+    <!-- Efecto de pétalos cayendo -->
+    <div class="petals-container" id="petalsContainer"></div>
+    
+    <div class="admin-container">
+        <header>
+            <h1>📊 Panel de Administración</h1>
+            <div class="admin-actions">
+                <button onclick="refreshData()" class="refresh-btn">🔄 Actualizar</button>
+                <button onclick="exportExcel()" class="export-btn">📊 Exportar Excel</button>
+                <a href="/" class="back-btn">← Volver al formulario</a>
+            </div>
+        </header>
+
+        <div class="stats-container">
+            <div class="stat-card">
+                <h3>Total Invitados</h3>
+                <span id="totalGuests" class="stat-number">0</span>
+            </div>
+            <div class="stat-card">
+                <h3>Personas en Autobús</h3>
+                <span id="busPersons" class="stat-number">0</span>
+            </div>
+            <div class="stat-card">
+                <h3>Con Acompañantes</h3>
+                <span id="companionGuests" class="stat-number">0</span>
+            </div>
+            <div class="stat-card">
+                <h3>Total Personas</h3>
+                <span id="totalPersons" class="stat-number">0</span>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="guests-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Apellidos</th>
+                        <th>N° Acomp.</th>
+                        <th>Acompañantes</th>
+                        <th>Menú</th>
+                        <th>Autobús</th>
+                        <th>Personas Bus</th>
+                        <th>Fecha Registro</th>
+                    </tr>
+                </thead>
+                <tbody id="guestsTableBody">
+                    <!-- Los datos se cargarán dinámicamente via JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal de confirmación para exportar -->
+    <div id="exportModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>¡Exportación Exitosa! 📊</h2>
+                <span class="modal-close" onclick="closeExportModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <img src="{{ url_for('static', filename='images/dancing_gif.gif') }}" alt="Celebración" class="celebration-gif">
+                <p class="confirmation-text">¡Excel descargado correctamente!</p>
+                <p class="celebration-message">Los datos están listos para usar 💕</p>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-button" onclick="closeExportModal()">¡Perfecto!</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+</body>
+</html>
